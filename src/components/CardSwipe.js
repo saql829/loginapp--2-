@@ -6,6 +6,8 @@ const CardSwipe = ({ setCardNumber }) => {
     const [cardDetails, setCardDetails] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showSlip, setShowSlip] = useState(false); // State to toggle slip visibility
+    const [showReceipt, setShowReceipt] = useState(false); // State to show receipt
 
     const handleCardSwipe = async () => {
         if (!cardInput) {
@@ -19,6 +21,8 @@ const CardSwipe = ({ setCardNumber }) => {
             const response = await axios.get(
                 `https://aptech.heritagejewels.com.pk/microservices/singlecard.php?cardnumber=${cardInput}`
             );
+            console.log(response.data);  // Debugging response data
+
             if (response.data) {
                 setCardDetails(response.data);
                 setCardNumber(cardInput);
@@ -30,6 +34,14 @@ const CardSwipe = ({ setCardNumber }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleShowReceipt = () => {
+        setShowReceipt(true); // Show the receipt when user clicks 'Yes'
+    };
+
+    const handleHideReceipt = () => {
+        setShowReceipt(false); // Hide the receipt
     };
 
     return (
@@ -51,9 +63,56 @@ const CardSwipe = ({ setCardNumber }) => {
             </button>
 
             {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+
             {cardDetails && (
                 <div className="mt-4 text-center">
-                    <h3 className="text-xl font-semibold">Card Balance: {cardDetails.balance}</h3>
+                    <h3 className="text-xl font-semibold">Card Number: {cardDetails.cardnumber}</h3>
+                    <h4 className="text-lg">Card Balance: {cardDetails.cardbalance}</h4>
+                    {/* Add other card details here */}
+                </div>
+            )}
+
+            {/* Ask if the user wants to see the receipt */}
+            {cardDetails && !showSlip && (
+                <div className="mt-4 text-center">
+                    <button
+                        onClick={() => setShowSlip(true)}
+                        className="w-full bg-green-500 text-white py-2 rounded-md mt-2"
+                    >
+                        View Slip?
+                    </button>
+                </div>
+            )}
+
+            {/* If user wants to see the slip, display it */}
+            {showSlip && !showReceipt && (
+                <div className="mt-4 text-center">
+                    <h3 className="text-xl font-semibold mb-2">Receipt</h3>
+                    <p>Card Number: {cardDetails.cardnumber}</p>
+                    <p>Card Balance: {cardDetails.cardbalance}</p>
+                    <button
+                        onClick={handleShowReceipt}
+                        className="w-full bg-blue-500 text-white py-2 rounded-md mt-2"
+                    >
+                        Confirm Receipt
+                    </button>
+                    <button
+                        onClick={handleHideReceipt}
+                        className="w-full bg-red-500 text-white py-2 rounded-md mt-2"
+                    >
+                        Close Receipt
+                    </button>
+                </div>
+            )}
+
+            {/* Display the receipt if user confirms */}
+            {showReceipt && (
+                <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
+                    <h3 className="text-2xl font-semibold text-center">Receipt Details</h3>
+                    <p>Card Number: {cardDetails.cardnumber}</p>
+                    <p>Card Balance: {cardDetails.cardbalance}</p>
+                    <p>Card Value: {cardDetails.cardvalue}</p>
+                    <p className="mt-4 text-gray-500">Thank you for using our service!</p>
                 </div>
             )}
         </div>

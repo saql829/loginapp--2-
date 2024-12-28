@@ -48,6 +48,7 @@ const ChargeCard = ({ cardNumber }) => {
             );
             if (response.data.success) {
                 setTransactionSuccess(true);
+                setAmount(''); // Clear the input field after successful transaction
             } else {
                 throw new Error('Transaction failed');
             }

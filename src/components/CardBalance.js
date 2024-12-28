@@ -16,10 +16,10 @@ const CardBalance = () => {
             );
             
             // Debugging response
-            console.log(response.data);
+            console.log(response.data); // Check the structure of the data
 
-            // Check if response contains valid card number and data
-            if (response.status === 200 && response.data.cardnumber) {
+            // Assuming the card data is in response.data and contains cardnumber, cardbalance, etc.
+            if (response.status === 200 && response.data && response.data.cardnumber) {
                 setCardData(response.data);
             } else {
                 setError('Card not found');
@@ -49,7 +49,7 @@ const CardBalance = () => {
 
             {cardData && (
                 <div>
-                    <h4>Card Balance: {cardData.cardbalance}</h4> {/* Use cardbalance from response */}
+                    <h4>Card Balance: {cardData.balance}</h4> {/* Assuming 'balance' is the correct field */}
                     <p>Card Value: {cardData.cardvalue}</p>
                     <p>Card Number: {cardData.cardnumber}</p>
                 </div>

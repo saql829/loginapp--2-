@@ -12,30 +12,33 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password) => {
         setLoading(true);
         setError(null);
-
+    
         try {
             const response = await axios.post(
                 'https://aptech.heritagejewels.com.pk/microservices/login.php',
                 { username, password },
                 { headers: { 'Content-Type': 'application/json' } }
             );
-
+    
             const data = response.data;
-
+            console.log(data); // Log the data for debugging
+            
             if (response.status === 200 && data.success) {
                 setIsAuthenticated(true);
                 localStorage.setItem('role', data.role); // Store the role in localStorage
                 return true;
             } else {
-                throw new Error(data.message || 'Login failed');
+                setError(data.message || 'Login failed');
+                return false;
             }
         } catch (err) {
-            setError(err.message);
+            setError('Error during login: ' + err.message);
             return false;
         } finally {
             setLoading(false);
         }
     };
+    
 
     const logout = () => {
         setIsAuthenticated(false);
