@@ -1,39 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import SuperAdminDashboard from './components/Pages/SuperAdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';  // Import AuthProvider context
+import Login from './components/Login';  // Import Login component
+import Dashboard from './components/Dashboard';  // Import the updated Dashboard component
+import ProtectedRoute from './components/ProtectedRoute';  // Import ProtectedRoute for authentication check
 
-// Ensure you have a default route for "/"
 const App = () => {
     return (
-        <AuthProvider>
+        <AuthProvider> {/* Auth provider to manage authentication context */}
             <Router>
                 <Routes>
-                    {/* Root route */}
-                    <Route path="/" element={<Login />} /> {/* Or another component as the default */}
+                    <Route path="/" element={<Login />} />  {/* Login page */}
+                    <Route path="/login" element={<Login />} />  {/* Login page */}
                     
-                    {/* Login Route */}
-                    <Route path="/login" element={<Login />} />
-
-                    {/* Shop User Dashboard Route */}
+                    {/* Protected Routes */}
                     <Route
                         path="/dashboard"
                         element={
                             <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    {/* Super Admin Dashboard Route */}
-                    <Route
-                        path="/admin-dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <SuperAdminDashboard />
+                                <Dashboard />  {/* Render Dashboard based on role */}
                             </ProtectedRoute>
                         }
                     />
