@@ -10,10 +10,16 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        
         const success = await login(username, password);
         if (success) {
-            navigate('/dashboard'); // Redirect on successful login
+            const role = localStorage.getItem("role"); // Retrieve the role from localStorage
+            // Redirect based on role
+            if (role === "admin") {
+                navigate("/admin-dashboard");
+            } else {
+                navigate("/dashboard");
+            }
         }
     };
 

@@ -24,12 +24,14 @@ export const AuthProvider = ({ children }) => {
 
             if (response.status === 200 && data.success) {
                 setIsAuthenticated(true);
-                return true
+                localStorage.setItem('role', data.role); // Store the role in localStorage
+                return true;
             } else {
                 throw new Error(data.message || 'Login failed');
             }
         } catch (err) {
             setError(err.message);
+            return false;
         } finally {
             setLoading(false);
         }
