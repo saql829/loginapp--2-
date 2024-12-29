@@ -7,9 +7,9 @@ import AllCards from './Pages/AllCards';
 import TransactionHistoryAdmin from './Pages/TransactionHistoryAdmin';
 import ManageCards from './Pages/ManageCards';
 import { Line } from 'react-chartjs-2';
-
-// Chart.js imports
 import { Chart } from 'chart.js';
+
+// Import necessary components for Chart.js
 import {
     CategoryScale,
     LinearScale,
@@ -20,7 +20,7 @@ import {
     Legend
 } from 'chart.js';
 
-// Register chart.js components
+// Register components with Chart.js
 Chart.register(
     CategoryScale,
     LinearScale,
@@ -36,12 +36,16 @@ const Dashboard = () => {
     const [cardNumber, setCardNumber] = useState('');
     const [role, setRole] = useState('');
 
+    // Fetch role from localStorage on component mount
     useEffect(() => {
         const userRole = localStorage.getItem('role');
-        setRole(userRole);
+        if (userRole) {
+            setRole(userRole);
+        } else {
+            setRole('shopUser'); // Default to shopUser if no role is found
+        }
     }, []);
 
-    // Define chart data and options
     const chartData = {
         labels: ['January', 'February', 'March', 'April', 'May'],
         datasets: [
@@ -66,57 +70,77 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="p-8 max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
+        <div className="p-8 max-w-7xl mx-auto bg-darkGray shadow-lg rounded-lg min-h-screen">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-4xl font-bold text-gray-800">
-                    {role === 'admin' ? 'Admin Dashboard' : 'Shop User Dashboard'}
-                </h1>
+                {/* Logo Section */}
+                <div className="flex items-center space-x-4">
+                    <img src="https://heritagejewels.com.pk/cdn/shop/files/png.png?v=1729942276&width=190" alt="Logo" className="w-12 h-12" />
+                    <h1 className="text-4xl font-bold text-gold">
+                        {role === 'admin' ? 'Admin Dashboard' : 'Shop User Dashboard'}
+                    </h1>
+                </div>
+
+                {/* Logout Button */}
                 <button
                     onClick={logout}
-                    className="bg-red-500 text-white py-2 px-6 rounded-md hover:bg-red-600 transition duration-300"
+                    className="bg-gold text-darkGray py-2 px-6 rounded-md hover:bg-yellow-600 transition duration-300"
                 >
                     Logout
                 </button>
             </div>
 
+            {/* Conditional Content for Admin and Shop User */}
             {role === 'admin' ? (
-                <div>
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold mb-4 text-gray-700">All Cards</h2>
+                // Admin Dashboard Content
+                <div className="flex gap-6">
+                    <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h2 className="text-2xl font-semibold mb-4 text-gold">All Cards</h2>
                         <AllCards />
                     </div>
 
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Transaction History</h2>
+                    <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h2 className="text-2xl font-semibold mb-4 text-gold">Transaction History</h2>
                         <TransactionHistoryAdmin />
                     </div>
 
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Manage Cards</h2>
+                    <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h2 className="text-2xl font-semibold mb-4 text-gold">Manage Cards</h2>
                         <ManageCards />
                     </div>
                 </div>
             ) : (
+                // Shop User Dashboard Content
                 <div className="flex gap-6">
-                    <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">Swipe Card</h2>
+                    {/* Card Swipe Section */}
+                    <div className="w-full md:w-1/2 bg-gray-50 p-6 rounded-lg shadow-md flex flex-col justify-between">
+                        <h2 className="text-2xl font-semibold mb-4 text-center text-gold">Swipe Card</h2>
                         <CardSwipe setCardNumber={setCardNumber} />
-
-                        {/* Chart Section */}
-                        <div className="mt-6">
-                            <h2 className="text-xl font-semibold mb-4 text-center text-gray-700">Card Usage Stats</h2>
-                            <div className="bg-white p-4 rounded-lg shadow-lg">
-                                <Line data={chartData} options={chartOptions} />
+                        
+                        {/* Charge Card Section */}
+                        {cardNumber && (
+                            <div className="mt-6">
+                                <ChargeCard cardNumber={cardNumber} />
                             </div>
-                        </div>
+                        )}
                     </div>
 
-                    <div className="w-full md:w-2/3 bg-gray-50 p-6 rounded-lg shadow-md">
-                        {cardNumber && <ChargeCard cardNumber={cardNumber} />}
-                        <TransactionHistory />
+                    {/* Space Between Card Swipe and Chart */}
+                    <div className="w-4 md:w-4 bg-transparent"></div>
+
+                    {/* Card Usage Stats Section (Chart) */}
+                    <div className="w-full md:w-1/2 bg-gray-50 p-6 rounded-lg shadow-md flex flex-col justify-between">
+                        <h2 className="text-xl font-semibold mb-4 text-center text-gold">Card Usage Stats</h2>
+                        <div className="bg-white p-4 rounded-lg shadow-lg">
+                            <Line data={chartData} options={chartOptions} />
+                        </div>
                     </div>
                 </div>
             )}
+
+            {/* Transaction History Table */}
+            <div className="w-full bg-gray-50 p-6 rounded-lg shadow-md mt-6">
+                <TransactionHistory />
+            </div>
         </div>
     );
 };
